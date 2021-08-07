@@ -15,5 +15,5 @@ Integer Programming Implementation in Xpress
 ## Modeling Result
 
 <p align="center">
-  <img src='/result visualization.jpg'/>
+  <img src='/results visualization.jpg'/>
 </p>
