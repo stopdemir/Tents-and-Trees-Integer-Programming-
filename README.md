@@ -1,4 +1,4 @@
-# Tents-and-Trees-Integer-Programming-
+# Tents-and-Trees-Integer-Programming-Model
 Integer Programming Implementation in Xpress
 
 ## Instructions
