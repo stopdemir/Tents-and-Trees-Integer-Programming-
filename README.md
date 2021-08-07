@@ -8,4 +8,12 @@ Integer Programming Implementation in Xpress
 
 ## Given Configuration
 
+<p align="center">
+  <img src='/data.jpg'/>
+</p>
+
 ## Modeling Result
+
+<p align="center">
+  <img src='/result visualization.jpg'/>
+</p>
