@@ -1,0 +1,68 @@
+model "tree_tent"
+ uses "mmxprs", "mmsvg"
+
+ parameters
+  DATAFILE="ece.dat"
+  n = 15
+
+ end-parameters
+
+ declarations
+  rows = 1..n                  ! range of rows
+  cols = 1..n                  ! range of columns
+
+  noncorner_rows = 2..(n-1)
+  noncorner_cols = 2..(n-1)
+
+  tree: array(rows, cols) of integer
+  R: array(rows) of integer
+  C: array(cols) of integer
+
+  x: array(rows, cols) of mpvar
+
+ end-declarations
+
+ initializations from DATAFILE
+  tree R C
+ end-initializations
+
+ forall(i in rows, j in cols) x(i,j) + tree(i,j) <= 1
+ !sum(i in rows, j in cols) x(i,j) = sum(i in rows, j in cols)tree(i,j)
+
+ forall(i in noncorner_rows, j in noncorner_cols) x(i-1,j) + x(i,j+1) + x(i+1,j) + x(i,j-1) >= tree(i,j)
+
+ x(1,2) + x(2,1) >= tree(1,1)
+ x(1,n-1) + x(2,n) >= tree(1,n)
+ x(n-1,1) + x(n,2) >= tree(n,1)
+ x(n,n-1) + x(n-1,n) >= tree(n,n)
+
+ forall(j in noncorner_cols) x(1,j-1) + x(2,j) + x(1,j+1)  >= tree(1,j)
+ forall(i in noncorner_rows) x(i-1,n) + x(i,n-1) + x(i+1,n)  >= tree(i,n)
+ forall(j in noncorner_cols) x(n,j-1) + x(n-1,j) + x(n,j+1)  >= tree(n,j)
+ forall(i in noncorner_rows) x(i-1,1) + x(i,2) + x(i+1,1)  >= tree(i,1)
+
+ forall(i in rows) sum(j in cols) x(i,j) = R(i)
+ forall(j in cols) sum(i in rows) x(i,j) = C(j)
+
+ forall(i in noncorner_rows, j in noncorner_cols) x(i-1,j-1) + x(i-1,j) + x(i-1,j+1) + x(i,j+1) + x(i+1,j+1) + x(i+1,j) + x(i+1,j-1) + x(i,j-1) <= 8*(1-x(i,j))
+
+ x(1,2) + x(2,1) + x(2,2) <= 3*(1-x(1,1))
+ x(1,n-1) + x(2,n-1)+ x(2,2) <= 3*(1-x(1,n))
+ x(n-1,1) + x(n-1,2) + x(n,2) <= 3*(1-x(n,1))
+ x(n,n-1) + x(n-1,n-1) + x(n-1,n) <= 3*(1-x(n,n))
+
+ forall(j in noncorner_cols) x(1,j-1) + x(2,j-1) + x(2,j) + x(2,j+1) + x(1,j+1)  <= 5*(1-x(1,j))
+ forall(i in noncorner_rows) x(i-1,n) + x(i,n-1) + x(i-1,n-1) + x(i+1,n-1) + x(i+1,n)  <= 5*(1-x(i,n))
+ forall(j in noncorner_cols) x(n,j-1) + x(n-1,j-1) + x(n-1,j) + x(n-1,j-1) + x(n,j+1)  <= 5*(1-x(n,j))
+ forall(i in noncorner_rows) x(i-1,1) + x(i-1,2) + x(i,2) + x(i+1,2) + x(i+1,1) <= 5*(1-x(i,1))
+
+ forall(i in rows, j in cols) x(i,j) is_binary
+
+ maximize(1)
+
+ !                                    ! Print out the solution
+ writeln("Solution:\n Objective: ", getobjval)
+ writeln("row  col  value")
+ forall(i in rows, j in cols)  writeln(i, ", ",j," : " , getsol(x(i,j)))
+
+end-model
